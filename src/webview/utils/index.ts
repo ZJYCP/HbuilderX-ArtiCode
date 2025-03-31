@@ -1,4 +1,4 @@
-export const isDev = false;
+export const isDev = !window.hasOwnProperty('hbuilderx');
 
 export const COMMAND_LIST = [
   {
