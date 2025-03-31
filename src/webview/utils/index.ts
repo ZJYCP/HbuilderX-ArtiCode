@@ -1,4 +1,4 @@
-export const isDev = !window.hasOwnProperty('hbuilderx');
+export const isDev = process.env.NODE_ENV === 'development';
 
 export const COMMAND_LIST = [
   {
