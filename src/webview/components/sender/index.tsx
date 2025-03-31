@@ -3,6 +3,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  Select,
   Textarea,
 } from '@heroui/react';
 import { SendHorizontal } from 'lucide-react';
@@ -13,6 +14,8 @@ import { COMMAND_LIST } from '../../utils';
 import { useUserStore } from '../../store';
 import useSendMessage from '../../hooks/useSendMessage';
 import { ExtMessageType } from '../../../utils/extType';
+import ModelSelectCom from './ModelSelectCom';
+import { eventBus } from '../../utils/eventBus';
 
 interface SenderComProps {
   content: string;
@@ -98,8 +101,7 @@ export default function SenderCom(props: SenderComProps) {
         />
 
         <div className="flex justify-between my-2 mx-2 text-xs">
-          {/* TODO：模型选择 */}
-          <span></span>
+          <ModelSelectCom></ModelSelectCom>
           <div className="flex gap-2">
             <span></span>
             <SendHorizontal
@@ -117,7 +119,7 @@ export default function SenderCom(props: SenderComProps) {
 
   const handleCommandClick = useMemoizedFn((command: string) => {
     if (command === '/clear') {
-      setMessages([]);
+      eventBus.emit('new-chat');
     }
   });
   return (
