@@ -15,6 +15,7 @@ import { useUserStore } from '../../store';
 import useSendMessage from '../../hooks/useSendMessage';
 import { ExtMessageType } from '../../../utils/extType';
 import ModelSelectCom from './ModelSelectCom';
+import { eventBus } from '../../utils/eventBus';
 
 interface SenderComProps {
   content: string;
@@ -118,7 +119,7 @@ export default function SenderCom(props: SenderComProps) {
 
   const handleCommandClick = useMemoizedFn((command: string) => {
     if (command === '/clear') {
-      setMessages([]);
+      eventBus.emit('new-chat');
     }
   });
   return (

@@ -4,6 +4,8 @@ import BubbleList from '../../components/bubbleList';
 import { HOST } from '../../../utils';
 import WelcomCom from '../../components/welcome';
 import { useSystemStore } from '../../store';
+import { useEffect } from 'react';
+import { eventBus } from '../../utils/eventBus';
 
 export default function HomePage() {
   const { providerId } = useSystemStore();
@@ -28,6 +30,16 @@ export default function HomePage() {
       Authorization: `Bearer ${localStorage.getItem('token')}`,
     },
   });
+
+  useEffect(() => {
+    const handler = () => {
+      setMessages([]);
+    };
+    eventBus.on('new-chat', handler);
+    return () => {
+      eventBus.off('new-chat', handler);
+    };
+  }, [setMessages]);
 
   return (
     <>
