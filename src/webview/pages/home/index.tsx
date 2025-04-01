@@ -17,6 +17,7 @@ export default function HomePage() {
     handleSubmit,
     status,
     setMessages,
+    append,
     stop,
   } = useChat({
     api: `${HOST}/llm/chat`,
@@ -40,6 +41,27 @@ export default function HomePage() {
       eventBus.off('new-chat', handler);
     };
   }, [setMessages]);
+
+  useEffect(() => {
+    const hander = (data: string, sendImmediate: boolean = true) => {
+      if (sendImmediate) {
+        append({
+          role: 'user',
+          content: data,
+        });
+      } else {
+        handleInputChange({
+          target: {
+            value: data,
+          },
+        } as React.ChangeEvent<HTMLInputElement>);
+      }
+    };
+    eventBus.on('insert-input', hander);
+    return () => {
+      eventBus.off('insert-input', hander);
+    };
+  }, [handleInputChange]);
 
   return (
     <>

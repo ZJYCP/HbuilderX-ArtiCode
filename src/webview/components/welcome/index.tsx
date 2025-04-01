@@ -1,10 +1,16 @@
 import { Kbd } from '@heroui/react';
 import { Sparkles } from 'lucide-react';
+import { eventBus } from '../../utils/eventBus';
 
 export default function WelcomCom() {
   const functionItem = (title: string, desc: string) => {
     return (
-      <div className="flex flex-col gap-1 items-start p-2  rounded bg-primary-500  cursor-pointer">
+      <div
+        className="flex flex-col gap-1 items-start p-2  rounded bg-primary-500  cursor-pointer"
+        onClick={() => {
+          eventBus.emit('insert-input', desc, true);
+        }}
+      >
         <section>
           <span className="mr-2">
             <Sparkles className="text-pink-500 inline w-4 h-4"></Sparkles>
