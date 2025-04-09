@@ -45,6 +45,7 @@ const requestInterceptor = (config: RequestConfig): RequestConfig => {
 const responseInterceptor = async (response: Response): Promise<any> => {
   if (!response.ok) {
     console.error('响应错误:', response.statusText);
+    showToast(response.statusText);
   }
   const res = await response.json();
 
@@ -54,9 +55,10 @@ const responseInterceptor = async (response: Response): Promise<any> => {
   if (res.code !== 200) {
     if (errorHandlers[res.code]) {
       errorHandlers[res.code]();
-    } else {
-      showToast(res.message);
     }
+    // else {
+    //   showToast(res.message);
+    // }
   }
 
   return res;

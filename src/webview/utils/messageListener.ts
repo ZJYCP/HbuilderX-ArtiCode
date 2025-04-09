@@ -1,6 +1,10 @@
 import { isDev } from '.';
 import { IWebviewMessage, WebviewMessageType } from '../../utils/extType';
-import { TokenHandler, WebviewMessageHandler } from './receiveStrategy';
+import {
+  FileInfoHandler,
+  TokenHandler,
+  WebviewMessageHandler,
+} from './receiveStrategy';
 
 class MessageListener {
   handlers: Map<WebviewMessageType, WebviewMessageHandler> = new Map();
@@ -20,6 +24,7 @@ class MessageListener {
 
   public registerHandlers() {
     this.handlers.set(WebviewMessageType.TOKEN, new TokenHandler());
+    this.handlers.set(WebviewMessageType.FILE_INFO, new FileInfoHandler());
   }
 
   start() {

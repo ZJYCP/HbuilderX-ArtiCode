@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Popover,
   PopoverContent,
@@ -10,25 +10,37 @@ import { SendHorizontal } from 'lucide-react';
 import { useMemoizedFn } from 'ahooks';
 import cx from 'classnames';
 import CommandTip from './CommandTip';
-import { COMMAND_LIST } from '../../utils';
+import { COMMAND_LIST, createNewUserMessage } from '../../utils';
 import { useUserStore } from '../../store';
 import useSendMessage from '../../hooks/useSendMessage';
 import { ExtMessageType } from '../../../utils/extType';
 import ModelSelectCom from './ModelSelectCom';
 import { eventBus } from '../../utils/eventBus';
+import CodeDescription from './CodeDescription';
+import { IFileInfo } from '../../types';
+import { generateId, Message } from 'ai';
 
 interface SenderComProps {
   content: string;
   status: 'ready' | 'submitted' | 'streaming' | 'error';
+  fileInfo: IFileInfo;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSubmit: () => void;
+  handleSubmit: (event: any, options: any) => void;
   setMessages: (messages: any[]) => void;
+  append: (message: Message) => void;
 }
 
 export default function SenderCom(props: SenderComProps) {
-  const { status, content, handleInputChange, handleSubmit, setMessages } =
-    props;
-  const [isOpen, setIsOpen] = React.useState(false);
+  const {
+    status,
+    content,
+    fileInfo,
+    handleInputChange,
+    handleSubmit,
+    setMessages,
+    append,
+  } = props;
+  const [isOpen, setIsOpen] = useState(false);
   const { token, userInfo } = useUserStore();
   const { sendHandler } = useSendMessage();
 
@@ -60,7 +72,14 @@ export default function SenderCom(props: SenderComProps) {
 
   const doSubmit = useMemoizedFn(() => {
     if (token && userInfo && !submitForbidden) {
-      handleSubmit();
+      const newMessage = createNewUserMessage(content, fileInfo);
+      append(newMessage);
+      handleInputChange({
+        target: {
+          value: '',
+        },
+      } as React.ChangeEvent<HTMLInputElement>);
+      // handleSubmit();
     } else {
       sendHandler({
         type: ExtMessageType.SHOW_INFORMATION,
@@ -93,10 +112,14 @@ export default function SenderCom(props: SenderComProps) {
           minRows={1}
           maxRows={12}
           variant="bordered"
+          label={
+            fileInfo ? (
+              <CodeDescription fileInfo={fileInfo}></CodeDescription>
+            ) : undefined
+          }
           classNames={{
             inputWrapper: 'border-none text-sm my-2',
           }}
-          // label={<div>label</div>}
           placeholder="输入问题， Shift+Enter换行/Enter发送"
         />
 
