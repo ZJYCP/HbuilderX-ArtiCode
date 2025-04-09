@@ -1,6 +1,10 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { getProjectVersion, getCommitHash } = require('./scripts/get_version');
+const { DefinePlugin } = require('webpack');
+const { GenerateVersionFilePlugin } = require('./scripts/webpack_plugins');
 
+const version = JSON.stringify(getProjectVersion());
 const webViewConfig = {
   mode: 'production',
 
@@ -107,6 +111,11 @@ const webViewConfig = {
       template: './src/webview/index.html', // 指定 HTML 模板
       filename: 'index.html',
     }),
+    new DefinePlugin({
+      'process.env.FRONT_APP_VERSION': version,
+      'process.env.sha': JSON.stringify(getCommitHash()),
+    }),
+    new GenerateVersionFilePlugin(version),
   ],
 
   cache: {

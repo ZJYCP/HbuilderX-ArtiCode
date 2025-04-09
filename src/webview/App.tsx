@@ -4,6 +4,8 @@ import Layout from './components/layout';
 import { useSystemStore } from './store';
 import useSendMessage from './hooks/useSendMessage';
 import { ExtMessageType } from '../utils/extType';
+import { useRequest } from 'ahooks';
+import { useCheckNewRelease } from './hooks/useCheckNewRelease';
 
 const SignIn = React.lazy(() => import('./pages/signIn'));
 const SignUp = React.lazy(() => import('./pages/signUp'));
@@ -20,6 +22,9 @@ export default function App() {
       });
     }, 400);
   }, []);
+
+  /** 检查前端是否有新版本 */
+  useCheckNewRelease();
 
   return (
     <HashRouter>

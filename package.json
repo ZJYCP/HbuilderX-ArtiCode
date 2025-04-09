@@ -34,10 +34,10 @@
     "plugin-manager"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && webpack",
-    "build:ext": "tsc -p tsconfig.build.json",
-    "build:web": "webpack",
-    "dev": "webpack serve --mode development",
+    "build": "cross-env NODE_ENV=production tsc -p tsconfig.build.json && webpack",
+    "build:ext": "cross-env NODE_ENV=production tsc -p tsconfig.build.json",
+    "build:web": "cross-env NODE_ENV=production webpack",
+    "dev": "cross-env NODE_ENV=development webpack serve --mode development",
     "lint": "eslint src --ext ts",
     "zip": "node scripts/pack_zip.js"
   },
@@ -48,8 +48,10 @@
     "@heroui/react": "^2.7.4",
     "ahooks": "^3.8.4",
     "ai": "^4.1.54",
+    "chalk": "^5.4.1",
     "classnames": "^2.5.1",
     "core-js": "^3.41.0",
+    "cross-env": "^7.0.3",
     "framer-motion": "^12.4.10",
     "lodash": "^4.17.21",
     "lucide-react": "^0.477.0",
@@ -60,6 +62,7 @@
     "react-syntax-highlighter": "^15.6.1",
     "regenerator-runtime": "^0.14.1",
     "remark-gfm": "^4.0.1",
+    "shelljs": "^0.9.2",
     "zustand": "^5.0.3"
   },
   "devDependencies": {

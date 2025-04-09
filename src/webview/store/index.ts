@@ -1,3 +1,4 @@
 import useUserStore from './UserStore';
 import useSystemStore from './SystemStore';
-export { useUserStore, useSystemStore };
+import { useVersionStore } from './Version';
+export { useUserStore, useSystemStore, useVersionStore };
