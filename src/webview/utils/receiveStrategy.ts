@@ -1,4 +1,5 @@
 import { useSystemStore, useUserStore } from '../store';
+import { eventBus } from './eventBus';
 
 export interface WebviewMessageHandler {
   handler(data: any): void;
@@ -38,5 +39,11 @@ export class ThemeHandler implements WebviewMessageHandler {
     updateSystemInfo({
       theme: this.convertColorScheme(data.colorScheme),
     });
+  }
+}
+
+export class FileInfoHandler implements WebviewMessageHandler {
+  handler(data: any) {
+    eventBus.emit('fileInfoPost', data);
   }
 }

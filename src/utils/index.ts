@@ -2,4 +2,4 @@
 export const HOST =
   process.env.NODE_ENV === 'development'
     ? 'http://localhost:3000'
-    : 'http://articode.artimind.top:3000';
+    : 'http://localhost:3000';

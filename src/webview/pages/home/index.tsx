@@ -4,11 +4,14 @@ import BubbleList from '../../components/bubbleList';
 import { HOST } from '../../../utils';
 import WelcomCom from '../../components/welcome';
 import { useSystemStore } from '../../store';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { eventBus } from '../../utils/eventBus';
+import { IFileInfo } from '../../types';
+import { createNewUserMessage } from '../../utils';
 
 export default function HomePage() {
   const { providerId } = useSystemStore();
+  const [fileInfo, setFileInfo] = useState<IFileInfo | null>(null);
 
   const {
     messages,
@@ -24,6 +27,7 @@ export default function HomePage() {
     onError: (err) => {
       console.log('error', err);
     },
+    sendExtraMessageFields: true,
     body: {
       providerId: providerId,
     },
@@ -45,10 +49,8 @@ export default function HomePage() {
   useEffect(() => {
     const hander = (data: string, sendImmediate: boolean = true) => {
       if (sendImmediate) {
-        append({
-          role: 'user',
-          content: data,
-        });
+        const newMessage = createNewUserMessage(data, fileInfo);
+        append(newMessage);
       } else {
         handleInputChange({
           target: {
@@ -63,6 +65,16 @@ export default function HomePage() {
     };
   }, [handleInputChange]);
 
+  useEffect(() => {
+    eventBus.on('fileInfoPost', (fileInfo: IFileInfo) => {
+      if (fileInfo && fileInfo.selection) {
+        setFileInfo(fileInfo);
+      } else {
+        setFileInfo(null);
+      }
+    });
+  }, []);
+
   return (
     <>
       {messages.length === 0 ? (
@@ -73,6 +85,8 @@ export default function HomePage() {
       <SenderCom
         content={input}
         status={status}
+        fileInfo={fileInfo}
+        append={append}
         handleInputChange={handleInputChange}
         handleSubmit={handleSubmit}
         setMessages={setMessages}

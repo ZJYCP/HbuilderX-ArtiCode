@@ -1,3 +1,6 @@
+import { generateId, JSONValue, Message } from 'ai';
+import { IFileInfo } from '../types';
+
 export const isDev = process.env.NODE_ENV === 'development';
 
 export const COMMAND_LIST = [
@@ -35,4 +38,23 @@ export const fallbackCopy = (text) => {
     console.error('回退方案失败:', err);
   }
   document.body.removeChild(textarea);
+};
+
+/**
+ * 创建新的用户消息
+ * @param content 消息内容
+ * @param codeInfo 代码信息
+ * @returns
+ */
+export const createNewUserMessage = (content: string, fileInfo?: IFileInfo) => {
+  const newMessage: Message = {
+    id: generateId(),
+    role: 'user',
+    content: content,
+  };
+
+  if (fileInfo && fileInfo.selection) {
+    newMessage.annotations = [fileInfo as unknown as JSONValue];
+  }
+  return newMessage;
 };

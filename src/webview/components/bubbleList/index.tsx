@@ -23,7 +23,7 @@ export default function BubbleList(props: BubbleListProps) {
     const handleScroll = () => {
       const { scrollTop, scrollHeight, clientHeight } = container;
       // 如果用户手动滚动到非底部，则停止自动滚动
-      setAutoScroll(scrollHeight - (scrollTop + clientHeight) < 30);
+      setAutoScroll(scrollHeight - (scrollTop + clientHeight) < 15);
     };
 
     container.addEventListener('scroll', handleScroll);
