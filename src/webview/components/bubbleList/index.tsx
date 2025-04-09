@@ -40,9 +40,9 @@ export default function BubbleList(props: BubbleListProps) {
   // 每轮回答结束后重置自动滚动
   useEffect(() => {
     if (messages.length !== lastMessageCount.current) {
-      if (status !== 'submitted') {
-        setAutoScroll(true);
-      }
+      // if (status !== 'submitted') {
+      setAutoScroll(true);
+      // }
       lastMessageCount.current = messages.length;
     }
   }, [messages.length, status]);
