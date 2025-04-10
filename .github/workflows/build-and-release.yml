@@ -5,13 +5,16 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: 'Select a tag to release (e.g., v1.0.0). Check existing tags in the "Releases" or "Tags" section.'
+        description: 'Select a tag'
         required: true
-
+env:
+  RELEASE_NAME: articode-frontend-${{ github.event.inputs.tag_name }}
 jobs:
   # Job 1: 构建和打包前端
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # 添加写入权限
     steps:
       # 1. 检出指定 tag 的代码
       - name: Checkout code with specific tag
@@ -19,35 +22,56 @@ jobs:
         with:
           ref: ${{ github.event.inputs.tag_name }} # 使用手动输入的 tag
 
-      # 2. 设置 Node.js 环境
-      - name: Setup Node.js
+      # 2. 设置 Node.js 环境并启用 pnpm
+      - name: Setup Node.js with pnpm
         uses: actions/setup-node@v4
         with:
           node-version: '20' # 根据你的项目调整 Node.js 版本
 
-      # 3. 安装依赖
+      # 3. 安装 pnpm
+      - name: Install pnpm
+        run: npm install -g pnpm # 全局安装 pnpm，也可以用 corepack 启用
+
+      # 4. 缓存 pnpm 依赖
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        id: cache-pnpm
+        with:
+          path: |
+            ~/.pnpm-store # pnpm 的全局存储目录
+            ./node_modules # 可选，缓存 node_modules
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }} # 基于 pnpm-lock.yaml 生成缓存键
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      # 5. 安装依赖
       - name: Install dependencies
-        run: npm install # 如果用 yarn，可以改为 yarn install
+        run: pnpm install --frozen-lockfile # 使用 --frozen-lockfile 确保严格依赖安装
+        if: steps.cache-pnpm.outputs.cache-hit != 'true' # 仅在缓存未命中时执行
 
-      # 4. 构建前端项目
+      # 5. 构建项目
       - name: Build project
-        run: npm run build # 根据你的构建命令调整
+        run: pnpm run build
 
-      # 5. 压缩构建产物为 zip 文件
-      - name: Zip build output
-        run: zip -r frontend-build.zip dist/ # 假设构建输出在 dist，根据实际调整
+      # 5. 使用 pnpm zip 打包特定文件
+      - name: Package release files
+        run: |
+          pnpm run zip ${{ env.RELEASE_NAME }}
+          ls -la release/  # 调试用，确认文件生成
 
-      # 6. 上传构建产物作为 artifact
-      - name: Upload artifact
+      # 6. 上传打包好的特定文件
+      - name: Upload packaged file
         uses: actions/upload-artifact@v4
         with:
-          name: frontend-build
-          path: frontend-build.zip
+          name: ${{ env.RELEASE_NAME }}.zip
+          path: release/${{env.RELEASE_NAME}}.zip
 
   # Job 2: 创建 Release 并上传资产
   release:
     runs-on: ubuntu-latest
-    needs: build # 依赖 build job
+    needs: build
+    permissions:
+      contents: write # 添加写入权限
     steps:
       # 1. 检出代码
       - name: Checkout code
@@ -57,7 +81,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: frontend-build
+          name: ${{ env.RELEASE_NAME }}.zip
 
       # 3. 创建 GitHub Release
       - name: Create Release
@@ -78,6 +102,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./frontend-build.zip
-          asset_name: frontend-build-${{ github.event.inputs.tag_name }}.zip
+          asset_path: ./release/${{ env.RELEASE_NAME }}.zip
+          asset_name: ${{ env.RELEASE_NAME }}.zip
           asset_content_type: application/zip
