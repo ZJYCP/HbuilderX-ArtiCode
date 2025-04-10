@@ -2,13 +2,11 @@ name: Build and Release Frontend
 
 # 定义触发条件
 on:
-  workflow_dispatch:
-    inputs:
-      tag_name:
-        description: 'Select a tag'
-        required: true
+  push:
+    tags:
+      - '*' # 当推送类似 v1.0.0 的标签时触发
 env:
-  RELEASE_NAME: articode-frontend-${{ github.event.inputs.tag_name }}
+  RELEASE_NAME: articode-frontend-${{ github.ref_name}}
 jobs:
   # Job 1: 构建和打包前端
   build:
@@ -20,7 +18,7 @@ jobs:
       - name: Checkout code with specific tag
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.tag_name }} # 使用手动输入的 tag
+          ref: ${{ github.ref_name }} # 使用手动输入的 tag
 
       # 2. 设置 Node.js 环境并启用 pnpm
       - name: Setup Node.js with pnpm
@@ -86,8 +84,8 @@ jobs:
       - name: 创建 GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.event.inputs.tag_name }}
-          name: ${{ github.event.inputs.tag_name }}
+          tag_name: ${{ github.ref_name}}
+          name: ${{ github.ref_name }}
           generate_release_notes: true # 自动生成发布说明
           draft: false
           prerelease: false
