@@ -22,34 +22,32 @@ jobs:
         with:
           ref: ${{ github.event.inputs.tag_name }} # 使用手动输入的 tag
 
-      # 2. 设置 pnpm
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-
-      # 3. 设置 Node.js
-      - name: Setup Node.js
+      # 2. 设置 Node.js 环境并启用 pnpm
+      - name: Setup Node.js with pnpm
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'pnpm'
+          node-version: '20' # 根据你的项目调整 Node.js 版本
 
-      # 4. 安装依赖 (带缓存)
-      - name: Install dependencies
-        uses: pnpm/action-setup@v2
+      # 3. 安装 pnpm
+      - name: Install pnpm
+        run: npm install -g pnpm # 全局安装 pnpm，也可以用 corepack 启用
+
+      # 4. 缓存 pnpm 依赖
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        id: cache-pnpm
         with:
-          run_install: |
-            - uses: actions/cache@v3
-              with:
-                path: |
-                  ~/.pnpm-store
-                  node_modules
-                  **/node_modules
-                key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
-                restore-keys: |
-                  ${{ runner.os }}-pnpm-
-            - run: pnpm install
+          path: |
+            ~/.pnpm-store # pnpm 的全局存储目录
+            ./node_modules # 可选，缓存 node_modules
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }} # 基于 pnpm-lock.yaml 生成缓存键
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      # 5. 安装依赖
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile # 使用 --frozen-lockfile 确保严格依赖安装
+        if: steps.cache-pnpm.outputs.cache-hit != 'true' # 仅在缓存未命中时执行
 
       # 5. 构建项目
       - name: Build project
