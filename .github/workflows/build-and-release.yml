@@ -13,6 +13,8 @@ jobs:
   # Job 1: 构建和打包前端
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # 添加写入权限
     steps:
       # 1. 检出指定 tag 的代码
       - name: Checkout code with specific tag
@@ -48,7 +50,9 @@ jobs:
   # Job 2: 创建 Release 并上传资产
   release:
     runs-on: ubuntu-latest
-    needs: build # 依赖 build job
+    needs: build
+    permissions:
+      contents: write # 添加写入权限
     steps:
       # 1. 检出代码
       - name: Checkout code
