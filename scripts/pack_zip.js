@@ -40,7 +40,9 @@ fs.writeJsonSync(tempPackagePath, newPackageJson, { spaces: 2 });
 // 创建 zip 文件
 const args = process.argv.slice(2);
 const fileName =
-  args[0] || `articode_${newPackageJson.version}_${getTimestamp()}`;
+  args[0] ||
+  process.env.RELEASE_NAME ||
+  `articode_${newPackageJson.version}_${getTimestamp()}`;
 
 const output = fs.createWriteStream(path.join(releaseDir, `${fileName}.zip`));
 const archive = archiver('zip', {
