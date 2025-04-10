@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: 'Select a tag to release (e.g., v1.0.0). Check existing tags in the "Releases" or "Tags" section.'
+        description: 'Select a tag'
         required: true
 env:
   RELEASE_NAME: articode-frontend-${{ github.event.inputs.tag_name }}
@@ -22,19 +22,38 @@ jobs:
         with:
           ref: ${{ github.event.inputs.tag_name }} # 使用手动输入的 tag
 
-      # 2. 设置 Node.js 环境
+      # 2. 设置 pnpm
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      # 3. 设置 Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # 根据你的项目调整 Node.js 版本
+          node-version: '20'
+          cache: 'pnpm'
 
-      # 3. 安装依赖
+      # 4. 安装依赖 (带缓存)
       - name: Install dependencies
-        run: npm install # 如果用 yarn，可以改为 yarn install
+        uses: pnpm/action-setup@v2
+        with:
+          run_install: |
+            - uses: actions/cache@v3
+              with:
+                path: |
+                  ~/.pnpm-store
+                  node_modules
+                  **/node_modules
+                key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+                restore-keys: |
+                  ${{ runner.os }}-pnpm-
+            - run: pnpm install
 
-      # 4. 构建前端项目
+      # 5. 构建项目
       - name: Build project
-        run: npm run build
+        run: pnpm run build
 
       # 5. 使用 pnpm zip 打包特定文件
       - name: Package release files
@@ -44,7 +63,7 @@ jobs:
       - name: Upload packaged file
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.RELEASE_NAME }}
+          name: ${{ env.RELEASE_NAME }}.zip
           path: release/${{env.RELEASE_NAME}}.zip
 
   # Job 2: 创建 Release 并上传资产
@@ -62,7 +81,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: frontend-build
+          name: ${{ env.RELEASE_NAME }}.zip
 
       # 3. 创建 GitHub Release
       - name: Create Release
