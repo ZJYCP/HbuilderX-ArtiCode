@@ -55,7 +55,9 @@ jobs:
 
       # 5. 使用 pnpm zip 打包特定文件
       - name: Package release files
-        run: pnpm run zip ${{ env.RELEASE_NAME }}
+        run: |
+          pnpm run zip ${{ env.RELEASE_NAME }}
+          ls -la release/  # 调试用，确认文件生成
 
       # 6. 上传打包好的特定文件
       - name: Upload packaged file
