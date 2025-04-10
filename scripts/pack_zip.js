@@ -2,17 +2,16 @@ const archiver = require('archiver');
 const fs = require('fs-extra');
 const path = require('path');
 
-
 // 获取当前时间戳 YYYYMMDDHHMM
 const getTimestamp = () => {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    return `${year}${month}${day}${hours}${minutes}`;
-  };
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  return `${year}${month}${day}${hours}${minutes}`;
+};
 
 // 获取项目根目录（scripts的上一级）
 const rootDir = path.join(__dirname, '..');
@@ -24,25 +23,28 @@ const packageJson = require(path.join(rootDir, 'package.json'));
 const newPackageJson = {
   ...packageJson,
   dependencies: {
-    lodash: packageJson.dependencies?.lodash || undefined
+    lodash: packageJson.dependencies?.lodash || undefined,
   },
   // 移除 devDependencies
-  devDependencies: undefined
+  devDependencies: undefined,
 };
 
 // 创建输出目录
 const releaseDir = path.join(rootDir, 'release');
 fs.ensureDirSync(releaseDir);
 
-
 // 写入新的 package.json 到临时位置
 const tempPackagePath = path.join(releaseDir, 'package.json');
 fs.writeJsonSync(tempPackagePath, newPackageJson, { spaces: 2 });
 
 // 创建 zip 文件
-const output = fs.createWriteStream(path.join(releaseDir, `articode_${newPackageJson.version}_${getTimestamp()}.zip`));
+const args = process.argv.slice(2);
+const fileName =
+  args[0] || `articode_${newPackageJson.version}_${getTimestamp()}`;
+
+const output = fs.createWriteStream(path.join(releaseDir, `${fileName}.zip`));
 const archive = archiver('zip', {
-  zlib: { level: 9 } // 最高压缩级别
+  zlib: { level: 9 }, // 最高压缩级别
 });
 
 output.on('close', () => {
