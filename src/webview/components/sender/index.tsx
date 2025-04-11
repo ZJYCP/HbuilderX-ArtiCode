@@ -6,7 +6,7 @@ import {
   Select,
   Textarea,
 } from '@heroui/react';
-import { SendHorizontal } from 'lucide-react';
+import { CircleStop, SendHorizontal } from 'lucide-react';
 import { useMemoizedFn } from 'ahooks';
 import cx from 'classnames';
 import CommandTip from './CommandTip';
@@ -28,6 +28,7 @@ interface SenderComProps {
   handleSubmit: (event: any, options: any) => void;
   setMessages: (messages: any[]) => void;
   append: (message: Message) => void;
+  stop: () => void;
 }
 
 export default function SenderCom(props: SenderComProps) {
@@ -70,6 +71,11 @@ export default function SenderCom(props: SenderComProps) {
     },
   );
 
+  const stopMessage = useMemoizedFn(() => {
+    if (submitForbidden) {
+      stop();
+    }
+  });
   const doSubmit = useMemoizedFn(() => {
     if (token && userInfo && !submitForbidden) {
       const newMessage = createNewUserMessage(content, fileInfo);
@@ -127,13 +133,17 @@ export default function SenderCom(props: SenderComProps) {
           <ModelSelectCom></ModelSelectCom>
           <div className="flex gap-2">
             <span></span>
-            <SendHorizontal
-              className={cx(
-                'size-4',
-                submitForbidden ? 'cursor-not-allowed' : 'cursor-pointer',
-              )}
-              onClick={doSubmit}
-            />
+            {submitForbidden ? (
+              <CircleStop
+                className="size-4 cursor-pointer"
+                onClick={stopMessage}
+              ></CircleStop>
+            ) : (
+              <SendHorizontal
+                className={'size-4 cursor-pointer'}
+                onClick={doSubmit}
+              />
+            )}
           </div>
         </div>
       </div>

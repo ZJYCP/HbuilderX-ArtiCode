@@ -87,6 +87,7 @@ export default function HomePage() {
         status={status}
         fileInfo={fileInfo}
         append={append}
+        stop={stop}
         handleInputChange={handleInputChange}
         handleSubmit={handleSubmit}
         setMessages={setMessages}
