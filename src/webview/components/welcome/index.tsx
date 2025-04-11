@@ -17,7 +17,7 @@ export default function WelcomCom() {
           </span>
           <span className="font-bold">{title}</span>
         </section>
-        <span className="text-xs">{desc}</span>
+        <span className="text-sm">{desc}</span>
       </div>
     );
   };
@@ -31,7 +31,7 @@ export default function WelcomCom() {
       </div>
 
       {/* AI 搜索提示 */}
-      <div className="mb-4 text-sm  ">
+      <div className="mb-4 text-base  ">
         <p>你的 AI 编程助手，使用快捷键</p>
         <p>
           <Kbd keys={['command']}>U</Kbd>来与我对话吧！
@@ -47,7 +47,7 @@ export default function WelcomCom() {
 
       {/* 帮助链接 */}
       <div className="mt-4 ">
-        <a href=" " className="text-sm hover:underline">
+        <a href=" " className="text-base hover:underline">
           输入 /help 查更多参考说明
         </a>
       </div>

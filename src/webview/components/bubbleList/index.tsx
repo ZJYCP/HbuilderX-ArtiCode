@@ -50,7 +50,7 @@ export default function BubbleList(props: BubbleListProps) {
   return (
     <div
       ref={containerRef}
-      className="flex-1 overflow-y-auto border-b-1 border-gray-600 text-sm"
+      className="flex-1 overflow-y-auto border-b-1 border-gray-600 text-base"
     >
       {messages.map((message) => (
         <div key={message.id} className="bg-primary m-2 rounded p-2">
