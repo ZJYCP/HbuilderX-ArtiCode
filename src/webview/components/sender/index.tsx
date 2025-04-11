@@ -40,6 +40,7 @@ export default function SenderCom(props: SenderComProps) {
     handleSubmit,
     setMessages,
     append,
+    stop,
   } = props;
   const [isOpen, setIsOpen] = useState(false);
   const { token, userInfo } = useUserStore();
