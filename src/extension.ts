@@ -14,7 +14,12 @@ async function activate(context: { subscriptions: any[] }) {
     ServieEnum.THEME_CHANGE_SERVICE,
   ]);
 
-  registerCommands([CommandsEnum.OPEN_WEBVIEW]);
+  registerCommands([
+    CommandsEnum.OPEN_WEBVIEW,
+    CommandsEnum.EXPLAIN_CODE,
+    CommandsEnum.OPTIMIZE_CODE,
+    CommandsEnum.COMMENT_CODE,
+  ]);
 }
 //该方法将在插件禁用的时候调用（目前是在插件卸载的时候触发）
 function deactivate() {}

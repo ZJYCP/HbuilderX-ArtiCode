@@ -2,6 +2,7 @@ import { isDev } from '.';
 import { IWebviewMessage, WebviewMessageType } from '../../utils/extType';
 import {
   FileInfoHandler,
+  IdeCommandHandler,
   TokenHandler,
   WebviewMessageHandler,
 } from './receiveStrategy';
@@ -25,6 +26,7 @@ class MessageListener {
   public registerHandlers() {
     this.handlers.set(WebviewMessageType.TOKEN, new TokenHandler());
     this.handlers.set(WebviewMessageType.FILE_INFO, new FileInfoHandler());
+    this.handlers.set(WebviewMessageType.IDE_COMMAND, new IdeCommandHandler());
   }
 
   start() {

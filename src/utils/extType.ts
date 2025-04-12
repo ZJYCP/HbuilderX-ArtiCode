@@ -28,6 +28,8 @@ export enum WebviewMessageType {
   FILE_INFO,
   // 主题色
   THEME,
+  // IDE快捷指令
+  IDE_COMMAND,
 }
 export interface IWebviewMessage {
   type: WebviewMessageType;

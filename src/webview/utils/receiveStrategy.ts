@@ -47,3 +47,9 @@ export class FileInfoHandler implements WebviewMessageHandler {
     eventBus.emit('fileInfoPost', data);
   }
 }
+
+export class IdeCommandHandler implements WebviewMessageHandler {
+  handler(data: any) {
+    eventBus.emit('insert-input', data, true);
+  }
+}
