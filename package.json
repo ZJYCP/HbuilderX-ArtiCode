@@ -28,8 +28,61 @@
           "title": "ArtiCode-智能编程助手"
         }
       ]
+    },
+    "commands": [
+      {
+        "command": "articode.openWebview",
+        "title": "打开面板"
+      },
+      {
+        "command": "articode.explainCode",
+        "title": "解释代码"
+      },
+      {
+        "command": "articode.optimizeCode",
+        "title": "优化代码"
+      },
+      {
+        "command": "articode.commentCode",
+        "title": "生成注释"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "id": "articode",
+          "title": "Articode 编程助手",
+          "group": "copy"
+        },
+        {
+          "command": "articode.openWebview",
+          "group": "articode@1",
+          "when": "editorTextFocus"
+        },
+        {
+          "command": "articode.explainCode",
+          "group": "articode@1",
+          "when": "editorTextFocus"
+        },
+        {
+          "command": "articode.optimizeCode",
+          "group": "articode@3",
+          "when": "editorTextFocus"
+        },
+        {
+          "command": "articode.commentCode",
+          "group": "articode@4",
+          "when": "editorTextFocus"
+        }
+      ]
     }
   },
+  "keybindings": [
+    {
+      "command": "articode.openWebview",
+      "key": "Ctrl+Shift+M"
+    }
+  ],
   "extensionDependencies": [
     "plugin-manager"
   ],
