@@ -51,6 +51,8 @@ const responseInterceptor = async (response: Response): Promise<any> => {
 
   const errorHandlers: Record<number, () => void> = {
     401: () => showToast('登录已过期，请重新登录'),
+    500: () => showToast('服务器内部错误，请稍后再试'),
+    502: () => showToast('服务限流，请重试'),
   };
   if (res.code !== 200) {
     if (errorHandlers[res.code]) {
