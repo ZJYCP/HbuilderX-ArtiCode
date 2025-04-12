@@ -28,8 +28,35 @@
           "title": "ArtiCode-智能编程助手"
         }
       ]
+    },
+    "commands": [
+      {
+        "command": "articode.openWebview",
+        "title": "Hello World"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "id": "articode",
+          "title": "Articode 编程助手",
+          "group": "assist"
+        },
+        {
+          "command": "articode.openWebview",
+          "title": "打开面板",
+          "group": "articode@1",
+          "when": "editorTextFocus"
+        }
+      ]
     }
   },
+  "keybindings": [
+    {
+      "command": "articode.openWebview",
+      "key": "Ctrl+Shift+M"
+    }
+  ],
   "extensionDependencies": [
     "plugin-manager"
   ],
