@@ -78,7 +78,10 @@ export default function SenderCom(props: SenderComProps) {
     }
   });
   const doSubmit = useMemoizedFn(() => {
-    if (token && userInfo && !submitForbidden) {
+    if (submitForbidden) {
+      return;
+    }
+    if (token && userInfo) {
       const newMessage = createNewUserMessage(content, fileInfo);
       append(newMessage);
       handleInputChange({
