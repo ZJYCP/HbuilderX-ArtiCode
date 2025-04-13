@@ -39,7 +39,7 @@ export const useCheckNewRelease = (checkInterval = 10 * 60 * 1000) => {
           description:
             '当前版本为' + localVersion + '，最新版本为' + remoteVersion,
           color: 'danger',
-          timeout: 10 * 60 * 1000,
+          timeout: 5 * 60 * 1000,
         });
         setHasNewVersion(true);
       } else {
