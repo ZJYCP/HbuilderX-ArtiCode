@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { useUserStore } from '../../store';
 import { useNavigate } from 'react-router';
-import { useMemoizedFn } from 'ahooks';
+import { useMemoizedFn, useRequest } from 'ahooks';
 import request from '../../utils/request';
 import {
   Tooltip,
@@ -25,8 +25,8 @@ export default function HeaderCom() {
     return !!token && userInfo;
   }, [token, userInfo]);
 
-  useEffect(() => {
-    const fetchInfo = async () => {
+  const { loading } = useRequest(
+    async () => {
       if (!userInfo && token) {
         const userInfo = (
           await request({
@@ -36,9 +36,11 @@ export default function HeaderCom() {
         ).data;
         setUserInfo(userInfo);
       }
-    };
-    fetchInfo();
-  }, [token]);
+    },
+    {
+      refreshDeps: [token],
+    },
+  );
 
   const handleNewChat = useMemoizedFn(() => {
     eventBus.emit('new-chat');
@@ -59,7 +61,9 @@ export default function HeaderCom() {
   return (
     <div className="h-8 flex justify-between items-center mx-1">
       <span className="font-bold">ArtiCode</span>
-      {hasLogin ? (
+      {loading ? (
+        <span></span>
+      ) : hasLogin ? (
         <div className="flex gap-2 items-center">
           <Tooltip color="foreground" content="新会话" showArrow>
             <SquarePlus
